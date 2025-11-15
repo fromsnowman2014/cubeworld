@@ -1,0 +1,54 @@
+From 1c7260636faa16381d9f87dc2fc43669a5117cc9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 15 Nov 2025 20:03:17 +0000
+Subject: [PATCH] fix: resolve ESLint warnings in Mobile Phase 1 code
+
+- Replace 'any' type with proper type assertions in DeviceDetector.ts
+  - Line 78: deviceMemory property with optional number type
+  - Line 142: msMaxTouchPoints property with nullish coalescing
+- Remove unused TouchPoint import from TouchManager.test.ts
+
+This ensures CI/CD pipeline passes with --max-warnings 0 setting.
+All tests (328 passed) and build verification completed successfully.
+
+Resolves deployment blocking issues.
+---
+ src/utils/DeviceDetector.ts     | 4 ++--
+ tests/unit/TouchManager.test.ts | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/utils/DeviceDetector.ts b/src/utils/DeviceDetector.ts
+index ac12f69..f69f187 100644
+--- a/src/utils/DeviceDetector.ts
++++ b/src/utils/DeviceDetector.ts
+@@ -75,7 +75,7 @@ export class DeviceDetector {
+    */
+   private detectPerformanceLevel(): PerformanceLevel {
+     const cores = navigator.hardwareConcurrency || 4;
+-    const memory = (navigator as any).deviceMemory || 4;
++    const memory = (navigator as { deviceMemory?: number }).deviceMemory || 4;
+
+     // Low-end: <= 4 cores and <= 4GB RAM
+     if (cores <= 4 && memory <= 4) {
+@@ -139,7 +139,7 @@ export class DeviceDetector {
+     return (
+       'ontouchstart' in window ||
+       navigator.maxTouchPoints > 0 ||
+-      (navigator as any).msMaxTouchPoints > 0
++      ((navigator as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) > 0
+     );
+   }
+
+diff --git a/tests/unit/TouchManager.test.ts b/tests/unit/TouchManager.test.ts
+index 57bcef1..fe56c30 100644
+--- a/tests/unit/TouchManager.test.ts
++++ b/tests/unit/TouchManager.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+-import { TouchManager, TouchGesture, TouchPoint } from '../../src/input/TouchManager';
++import { TouchManager, TouchGesture } from '../../src/input/TouchManager';
+
+ describe('TouchManager', () => {
+   let touchManager: TouchManager;
+--
+2.43.0
