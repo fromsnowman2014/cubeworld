@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { TouchManager, TouchGesture, TouchPoint } from '../../src/input/TouchManager';
+import { TouchManager, TouchGesture } from '../../src/input/TouchManager';
 
 describe('TouchManager', () => {
   let touchManager: TouchManager;
