@@ -1,5 +1,5 @@
 import { VoxelGameEngine } from '../core/VoxelGameEngine';
-import { VoxelGameState, BlockType, ToolMode, BLOCK_TYPES, BlockCategory } from '../types/VoxelTypes';
+import { VoxelGameState, BlockType, ToolMode, BLOCK_TYPES } from '../types/VoxelTypes';
 import { BlockCategoryManager } from './BlockCategoryManager';
 
 /**

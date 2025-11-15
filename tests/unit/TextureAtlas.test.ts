@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { TextureAtlas, TextureCoordinates } from '../../src/graphics/TextureAtlas';
+import { TextureAtlas } from '../../src/graphics/TextureAtlas';
 import { BlockType } from '../../src/types/VoxelTypes';
 import { TEXTURE_CONSTANTS } from '../../src/constants/GraphicsConstants';
 import * as THREE from 'three';
@@ -137,7 +137,7 @@ describe('TextureAtlas', () => {
       const tilesPerRow = TEXTURE_CONSTANTS.ATLAS_SIZE / TEXTURE_CONSTANTS.TILE_SIZE;
 
       blockTypes.forEach(blockType => {
-        const coords = atlas.getTextureCoordinates(blockType as BlockType);
+        atlas.getTextureCoordinates(blockType as BlockType);
 
         // Calculate which row and column this tile is in
         const tileIndex = blockType as number;
@@ -243,6 +243,7 @@ describe('TextureAtlas', () => {
     });
 
     it('should handle invalid face parameter gracefully', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const coords = atlas.getTextureCoordinates(BlockType.GRASS, 'invalid' as any);
       expect(coords).toBeDefined();
     });

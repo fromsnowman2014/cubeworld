@@ -194,8 +194,7 @@ describe('StructureGenerator', () => {
   describe('structure composition', () => {
     it('should use appropriate block types for houses', () => {
       const house = generator.generateHouse();
-      const blockTypes = new Set(house.blocks.map(b => b.blockType));
-
+      // Verify structure is created with blocks
       // Houses should use building materials
       const hasBuildingBlocks = house.blocks.some(b =>
         [

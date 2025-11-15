@@ -18,8 +18,8 @@ afterEach(() => {
 
 // Mock WebGL context if needed for Three.js tests
 if (typeof window !== 'undefined' && !window.WebGLRenderingContext) {
-  // @ts-ignore
+  // @ts-expect-error - Mocking WebGL context for tests
   window.WebGLRenderingContext = class {};
-  // @ts-ignore
+  // @ts-expect-error - Mocking WebGL context for tests
   window.WebGL2RenderingContext = class {};
 }

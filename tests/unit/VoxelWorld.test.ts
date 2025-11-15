@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { VoxelWorld } from '../../src/core/VoxelWorld';
 import { BlockType } from '../../src/types/VoxelTypes';
@@ -154,8 +154,6 @@ describe('VoxelWorld', () => {
     });
 
     it('should update the scene when setting a block', () => {
-      const initialMeshCount = scene.children.length;
-
       world.setBlock(10, 30, 10, BlockType.STONE);
 
       // Mesh should be rebuilt, count might change
@@ -237,11 +235,6 @@ describe('VoxelWorld', () => {
       // Count blocks at Y=0 (all should be bedrock)
       let bedrockCount = 0;
       const chunkSize = 16;
-      const renderDistance = 3;
-      const totalChunks = (renderDistance * 2 + 1) * (renderDistance * 2 + 1);
-
-      // Each chunk should have chunkSize * chunkSize bedrock blocks at bottom
-      const expectedBedrockCount = totalChunks * chunkSize * chunkSize;
 
       // Verify bedrock exists
       for (let x = -chunkSize; x < chunkSize; x++) {
@@ -258,8 +251,6 @@ describe('VoxelWorld', () => {
 
   describe('regenerateWorld', () => {
     it('should regenerate the world with different terrain', () => {
-      const originalBlock = world.getBlock(10, 30, 10);
-
       world.regenerateWorld();
 
       const newBlock = world.getBlock(10, 30, 10);
@@ -272,8 +263,6 @@ describe('VoxelWorld', () => {
     });
 
     it('should update the scene', () => {
-      const initialChildren = scene.children.length;
-
       world.regenerateWorld();
 
       // Scene should still have meshes
