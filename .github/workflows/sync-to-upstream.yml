@@ -1,0 +1,38 @@
+name: Sync to Upstream (fromsnowman2014)
+
+# jaylikescode/cubeworld (원본) → fromsnowman2014/cubeworld (Vercel 배포용) 자동 동기화
+# main 브랜치에 push될 때마다 자동으로 upstream에 미러링
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 전체 히스토리 가져오기 (중요!)
+          token: ${{ secrets.UPSTREAM_PAT }}  # Personal Access Token 사용
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://x-access-token:${{ secrets.UPSTREAM_PAT }}@github.com/fromsnowman2014/cubeworld.git || true
+
+      - name: Push to upstream
+        run: |
+          git push upstream main --force-with-lease
+
+      - name: Sync status
+        run: |
+          echo "✅ Successfully synced to fromsnowman2014/cubeworld"
+          echo "📦 Vercel will auto-deploy from upstream repository"
