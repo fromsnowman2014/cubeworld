@@ -1,6 +1,7 @@
 import { VoxelGameEngine } from '../core/VoxelGameEngine';
 import { VoxelGameState, BlockType, ToolMode, BLOCK_TYPES } from '../types/VoxelTypes';
 import { BlockCategoryManager } from './BlockCategoryManager';
+import { DeviceDetector } from '../utils/DeviceDetector';
 
 /**
  * Block icon mapping for UI display
@@ -97,12 +98,14 @@ export class VoxelUIManager {
   private gameEngine: VoxelGameEngine;
   private loadingElement: HTMLElement;
   private categoryManager: BlockCategoryManager;
+  private deviceDetector: DeviceDetector;
   private isCompactMode: boolean = false;
   private currentSearchQuery: string = '';
 
   constructor(gameEngine: VoxelGameEngine) {
     this.gameEngine = gameEngine;
     this.categoryManager = new BlockCategoryManager();
+    this.deviceDetector = new DeviceDetector();
 
     this.loadingElement = document.getElementById('loading')!;
     this.hideLoading();
@@ -120,13 +123,62 @@ export class VoxelUIManager {
     });
   }
 
+  /**
+   * Detect if we should render mobile UI
+   * Checks URL parameter first, then device detection
+   */
+  private isMobileMode(): boolean {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // URL parameter override
+    if (urlParams.has('mode')) {
+      const mode = urlParams.get('mode');
+      if (mode === 'mobile') return true;
+      if (mode === 'desktop') return false;
+      // Invalid mode parameter - fall through to device detection
+    }
+
+    // Device detection
+    return this.deviceDetector.isMobile() || this.deviceDetector.isTablet();
+  }
+
   private initializeUI(): void {
+    if (this.isMobileMode()) {
+      this.renderMobileUI();
+    } else {
+      this.renderDesktopUI();
+    }
+  }
+
+  /**
+   * Render desktop UI (original implementation)
+   */
+  private renderDesktopUI(): void {
     this.setupToolButtons();
     this.setupWeatherButtons();
     this.renderCategoryTabs();
     this.renderBlockGrid();
     this.setupSearchInput();
     this.renderCompactToggle();
+    this.updateUI(this.gameEngine.getGameState());
+  }
+
+  /**
+   * Render mobile UI (placeholder - will be implemented in Phase 2)
+   */
+  private renderMobileUI(): void {
+    // Hide desktop toolbar
+    const toolbar = document.getElementById('toolbar');
+    if (toolbar) {
+      toolbar.classList.add('hidden');
+      toolbar.classList.add('mobile-mode');
+    }
+
+    // Mobile UI components will be added in Phase 2
+    // For now, just mark the UI as mobile mode
+    console.log('Mobile UI mode activated');
+
+    // Still need to update UI with game state
     this.updateUI(this.gameEngine.getGameState());
   }
 
