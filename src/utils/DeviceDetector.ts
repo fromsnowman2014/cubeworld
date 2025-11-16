@@ -75,7 +75,7 @@ export class DeviceDetector {
    */
   private detectPerformanceLevel(): PerformanceLevel {
     const cores = navigator.hardwareConcurrency || 4;
-    const memory = (navigator as any).deviceMemory || 4;
+    const memory = (navigator as { deviceMemory?: number }).deviceMemory || 4;
 
     // Low-end: <= 4 cores and <= 4GB RAM
     if (cores <= 4 && memory <= 4) {
@@ -139,7 +139,7 @@ export class DeviceDetector {
     return (
       'ontouchstart' in window ||
       navigator.maxTouchPoints > 0 ||
-      (navigator as any).msMaxTouchPoints > 0
+      ((navigator as { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) > 0
     );
   }
 
