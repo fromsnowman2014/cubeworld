@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { TouchManager } from '../input/TouchManager';
+import { DeviceDetector } from '../utils/DeviceDetector';
 
 export class CameraController {
   public camera: THREE.PerspectiveCamera;
@@ -12,24 +14,38 @@ export class CameraController {
   private minPolarAngle: number = 0.1;
   private maxPolarAngle: number = Math.PI / 2 - 0.1;
 
+  // Touch support
+  private touchManager?: TouchManager;
+  private deviceDetector: DeviceDetector;
+
   constructor(canvas: HTMLElement, aspect: number) {
     this.camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000);
-    
+
     // Initial camera position - look at terrain surface level (sea level = 32)
     this.target = new THREE.Vector3(0, 32, 0);
     this.spherical = new THREE.Spherical(80, Math.PI / 3, Math.PI / 4);
     this.lastMousePos = new THREE.Vector2();
+
+    // Initialize device detection
+    this.deviceDetector = new DeviceDetector();
 
     this.updateCameraPosition();
     this.setupControls(canvas);
   }
 
   private setupControls(canvas: HTMLElement): void {
+    // Setup touch controls if device supports touch
+    if (this.deviceDetector.hasTouchSupport()) {
+      this.setupTouchControls(canvas as HTMLCanvasElement);
+    }
+
     // Mouse down
     canvas.addEventListener('mousedown', (e: MouseEvent) => {
-      if (e.button === 2) { // Right click
+      if (e.button === 2) {
+        // Right click
         this.isDragging = true;
-      } else if (e.button === 1) { // Middle click
+      } else if (e.button === 1) {
+        // Middle click
         this.isPanning = true;
       }
       this.lastMousePos.set(e.clientX, e.clientY);
@@ -68,26 +84,70 @@ export class CameraController {
       this.zoom(e.deltaY * 0.01);
     }, { passive: false });
 
-    // Keyboard controls
-    window.addEventListener('keydown', (e: KeyboardEvent) => {
-      switch (e.key.toLowerCase()) {
-        case 'r':
-          this.resetView();
-          break;
-        case 'w':
-          this.moveForward();
-          break;
-        case 's':
-          this.moveBackward();
-          break;
-        case 'a':
-          this.moveLeft();
-          break;
-        case 'd':
-          this.moveRight();
-          break;
+    // Keyboard controls (desktop only)
+    if (this.deviceDetector.isDesktop()) {
+      window.addEventListener('keydown', (e: KeyboardEvent) => {
+        switch (e.key.toLowerCase()) {
+          case 'r':
+            this.resetView();
+            break;
+          case 'w':
+            this.moveForward();
+            break;
+          case 's':
+            this.moveBackward();
+            break;
+          case 'a':
+            this.moveLeft();
+            break;
+          case 'd':
+            this.moveRight();
+            break;
+        }
+      });
+    }
+  }
+
+  private setupTouchControls(canvas: HTMLCanvasElement): void {
+    this.touchManager = new TouchManager(canvas);
+
+    // Single finger drag → Rotate camera
+    this.touchManager.onDrag((event) => {
+      if (event.fingerCount === 1) {
+        // Convert pixel delta to rotation
+        // Adjust sensitivity based on screen size for better control
+        const sensitivity = this.deviceDetector.isMobile() ? 0.008 : 0.006;
+        this.rotate(-event.deltaX * sensitivity, -event.deltaY * sensitivity);
+      } else if (event.fingerCount === 2) {
+        // Two finger drag → Pan camera
+        const sensitivity = this.deviceDetector.isMobile() ? 0.08 : 0.06;
+        this.pan(event.deltaX * sensitivity, event.deltaY * sensitivity);
       }
     });
+
+    // Pinch → Zoom camera
+    this.touchManager.onPinch((event) => {
+      // Convert scale to zoom delta
+      // Scale < 1 means pinch in (zoom out)
+      // Scale > 1 means pinch out (zoom in)
+      const zoomDelta = -(event.deltaScale * this.spherical.radius * 0.5);
+      this.zoom(zoomDelta);
+    });
+
+    // Long press → Reset view
+    this.touchManager.onLongPress(() => {
+      this.resetView();
+      // Could add haptic feedback here if supported
+      if ('vibrate' in navigator) {
+        navigator.vibrate(100);
+      }
+    });
+  }
+
+  public destroy(): void {
+    if (this.touchManager) {
+      this.touchManager.destroy();
+    }
   }
 
   private rotate(deltaAzimuth: number, deltaPolar: number): void {
