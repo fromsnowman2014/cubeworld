@@ -248,5 +248,21 @@ export class CameraController {
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
   }
+
+  // Public methods for programmatic camera control (used by CameraTouchController)
+  public rotateCamera(deltaX: number, deltaY: number): void {
+    // Convert pixel delta to rotation with appropriate sensitivity
+    const sensitivity = 0.005;
+    this.rotate(deltaX * sensitivity, deltaY * sensitivity);
+  }
+
+  public zoomCamera(delta: number): void {
+    this.zoom(delta);
+  }
+
+  public panCamera(deltaX: number, deltaY: number): void {
+    const sensitivity = 0.05;
+    this.pan(deltaX * sensitivity, deltaY * sensitivity);
+  }
 }
 
