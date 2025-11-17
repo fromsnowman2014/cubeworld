@@ -3,6 +3,7 @@ import { VoxelGameState, BlockType, ToolMode, BLOCK_TYPES } from '../types/Voxel
 import { BlockCategoryManager } from './BlockCategoryManager';
 import { DeviceDetector } from '../utils/DeviceDetector';
 import { MobileBottomNav } from './MobileBottomNav';
+import { MobileBlockSheet } from './MobileBlockSheet';
 
 /**
  * Block icon mapping for UI display
@@ -103,6 +104,7 @@ export class VoxelUIManager {
   private isCompactMode: boolean = false;
   private currentSearchQuery: string = '';
   private mobileBottomNav?: MobileBottomNav;
+  private mobileBlockSheet?: MobileBlockSheet;
 
   constructor(gameEngine: VoxelGameEngine) {
     this.gameEngine = gameEngine;
@@ -190,12 +192,37 @@ export class VoxelUIManager {
       // Handle tool changes
       this.mobileBottomNav.onToolChange((tool: string) => {
         this.gameEngine.setTool(tool as ToolMode);
+
+        // Open block sheet when Place or Paint tool is selected
+        if ((tool === 'place' || tool === 'paint') && this.mobileBlockSheet) {
+          this.mobileBlockSheet.open();
+        }
       });
 
       // Handle menu button (placeholder for Phase 4)
       this.mobileBottomNav.onMenuOpen(() => {
         console.log('Menu button clicked - will implement drawer in Phase 4');
         // TODO: Open mobile drawer menu in Phase 4
+      });
+
+      // Create mobile block sheet
+      this.mobileBlockSheet = new MobileBlockSheet(uiOverlay);
+
+      // Render blocks from current category
+      const currentBlocks = this.categoryManager.getCurrentBlocks();
+      this.mobileBlockSheet.renderBlocks(currentBlocks);
+
+      // Handle block selection
+      this.mobileBlockSheet.onBlockSelect((block: BlockType) => {
+        this.gameEngine.setBlock(block);
+      });
+
+      // Listen for category changes to update block sheet
+      this.categoryManager.onCategoryChange(() => {
+        if (this.mobileBlockSheet) {
+          const blocks = this.categoryManager.getCurrentBlocks();
+          this.mobileBlockSheet.renderBlocks(blocks);
+        }
       });
     }
 

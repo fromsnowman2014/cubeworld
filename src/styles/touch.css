@@ -388,6 +388,11 @@
   background: rgba(255, 255, 255, 0.3);
   border-radius: 2px;
   margin: 0 auto var(--spacing-lg) auto;
+  cursor: grab;
+}
+
+.bottom-sheet-handle:active {
+  cursor: grabbing;
 }
 
 .bottom-sheet-title {
@@ -396,6 +401,89 @@
   color: white;
   margin-bottom: var(--spacing-lg);
   text-align: center;
+}
+
+/* Mobile Block Sheet */
+.mobile-block-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 20px 0 0;
+  padding: var(--spacing-xl);
+  padding-bottom: calc(var(--spacing-xl) + var(--safe-area-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3000;
+  max-height: 70vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-block-sheet.open {
+  transform: translateY(0);
+}
+
+.mobile-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-sheet-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-block-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+}
+
+.mobile-block-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  min-height: 80px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: none;
+}
+
+.mobile-block-btn:active {
+  transform: scale(0.95);
+}
+
+.mobile-block-btn.selected {
+  border-color: #4ecdc4;
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
+}
+
+.mobile-block-btn .block-icon {
+  font-size: 32px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.mobile-block-btn .block-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
 }
 
 .bottom-sheet-actions {
