@@ -3,6 +3,14 @@ import { VoxelUIManager } from '../../src/ui/VoxelUIManager';
 import { VoxelGameEngine } from '../../src/core/VoxelGameEngine';
 import { DeviceDetector } from '../../src/utils/DeviceDetector';
 
+// Type helper for accessing private methods in tests
+interface VoxelUIManagerPrivate {
+  isMobileMode(): boolean;
+  renderMobileUI(): void;
+  renderDesktopUI(): void;
+  deviceDetector: DeviceDetector;
+}
+
 /**
  * Mobile-specific tests for VoxelUIManager
  * Tests device mode detection and conditional UI rendering
@@ -42,7 +50,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       toggleRain: vi.fn(),
       toggleSnow: vi.fn(),
       regenerateWorld: vi.fn(),
-    } as any;
+    } as unknown as VoxelGameEngine;
   });
 
   afterEach(() => {
@@ -61,7 +69,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Should detect as mobile mode
-      expect((uiManager as any).isMobileMode()).toBe(true);
+      expect((uiManager as VoxelUIManagerPrivate).isMobileMode()).toBe(true);
     });
 
     it('should detect mobile mode when DeviceDetector reports tablet', () => {
@@ -73,7 +81,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Tablets should use mobile UI
-      expect((uiManager as any).isMobileMode()).toBe(true);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(true);
     });
 
     it('should detect desktop mode when DeviceDetector reports desktop', () => {
@@ -84,7 +92,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
 
       uiManager = new VoxelUIManager(mockGameEngine);
 
-      expect((uiManager as any).isMobileMode()).toBe(false);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(false);
     });
   });
 
@@ -101,7 +109,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Should override to mobile mode
-      expect((uiManager as any).isMobileMode()).toBe(true);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(true);
     });
 
     it('should force desktop mode when URL has ?mode=desktop', () => {
@@ -116,7 +124,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Should override to desktop mode
-      expect((uiManager as any).isMobileMode()).toBe(false);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(false);
     });
 
     it('should ignore invalid mode parameter', () => {
@@ -131,7 +139,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Should fall back to device detection
-      expect((uiManager as any).isMobileMode()).toBe(false);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(false);
     });
 
     it('should prioritize URL parameter over device detection', () => {
@@ -143,7 +151,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
 
       uiManager = new VoxelUIManager(mockGameEngine);
 
-      expect((uiManager as any).isMobileMode()).toBe(false);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).isMobileMode()).toBe(false);
     });
   });
 
@@ -153,8 +161,8 @@ describe('VoxelUIManager - Mobile Detection', () => {
       vi.spyOn(DeviceDetector.prototype, 'isMobile').mockReturnValue(true);
 
       // Spy on renderMobileUI method (will be implemented)
-      const renderMobileSpy = vi.spyOn(VoxelUIManager.prototype as any, 'renderMobileUI');
-      const renderDesktopSpy = vi.spyOn(VoxelUIManager.prototype as any, 'renderDesktopUI');
+      const renderMobileSpy = vi.spyOn(VoxelUIManager.prototype as unknown as VoxelUIManagerPrivate, 'renderMobileUI');
+      const renderDesktopSpy = vi.spyOn(VoxelUIManager.prototype as unknown as VoxelUIManagerPrivate, 'renderDesktopUI');
 
       uiManager = new VoxelUIManager(mockGameEngine);
 
@@ -170,8 +178,8 @@ describe('VoxelUIManager - Mobile Detection', () => {
       vi.spyOn(DeviceDetector.prototype, 'isDesktop').mockReturnValue(true);
 
       // Spy on render methods
-      const renderMobileSpy = vi.spyOn(VoxelUIManager.prototype as any, 'renderMobileUI');
-      const renderDesktopSpy = vi.spyOn(VoxelUIManager.prototype as any, 'renderDesktopUI');
+      const renderMobileSpy = vi.spyOn(VoxelUIManager.prototype as unknown as VoxelUIManagerPrivate, 'renderMobileUI');
+      const renderDesktopSpy = vi.spyOn(VoxelUIManager.prototype as unknown as VoxelUIManagerPrivate, 'renderDesktopUI');
 
       uiManager = new VoxelUIManager(mockGameEngine);
 
@@ -220,8 +228,8 @@ describe('VoxelUIManager - Mobile Detection', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
 
       // Should have deviceDetector property
-      expect((uiManager as any).deviceDetector).toBeDefined();
-      expect((uiManager as any).deviceDetector).toBeInstanceOf(DeviceDetector);
+      expect((uiManager as unknown as VoxelUIManagerPrivate).deviceDetector).toBeDefined();
+      expect((uiManager as unknown as VoxelUIManagerPrivate).deviceDetector).toBeInstanceOf(DeviceDetector);
     });
 
     it('should use DeviceDetector methods for mode detection', () => {
@@ -229,7 +237,7 @@ describe('VoxelUIManager - Mobile Detection', () => {
       const isTabletSpy = vi.spyOn(DeviceDetector.prototype, 'isTablet');
 
       uiManager = new VoxelUIManager(mockGameEngine);
-      (uiManager as any).isMobileMode();
+      (uiManager as unknown as VoxelUIManagerPrivate).isMobileMode();
 
       // Should call DeviceDetector methods
       expect(isMobileSpy).toHaveBeenCalled();
