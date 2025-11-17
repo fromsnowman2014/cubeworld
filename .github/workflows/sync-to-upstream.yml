@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 전체 히스토리 가져오기 (중요!)
-          token: ${{ secrets.UPSTREAM_PAT }}  # Personal Access Token 사용
+          token: ${{ secrets.UPSTREAM_PAT || secrets.GITHUB_TOKEN }}  # PAT 또는 기본 토큰 사용
 
       - name: Configure Git
         run: |
@@ -26,7 +26,7 @@ jobs:
 
       - name: Add upstream remote
         run: |
-          git remote add upstream https://x-access-token:${{ secrets.UPSTREAM_PAT }}@github.com/fromsnowman2014/cubeworld.git || true
+          git remote add upstream https://x-access-token:${{ secrets.UPSTREAM_PAT || secrets.GITHUB_TOKEN }}@github.com/fromsnowman2014/cubeworld.git || true
 
       - name: Fetch upstream to avoid stale info
         run: |
