@@ -242,6 +242,85 @@
   padding: var(--spacing-lg);
 }
 
+/* Mobile Drawer (right-side) */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 80%;
+  max-width: 320px;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.drawer-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: var(--spacing-md);
+  padding: 0 var(--spacing-sm);
+}
+
+.drawer-category-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: var(--touch-target-min);
+  text-align: left;
+}
+
+.drawer-category-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.drawer-category-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.drawer-category-btn.active {
+  border-left-color: #4ecdc4;
+  background: rgba(78, 205, 196, 0.1);
+  color: #4ecdc4;
+}
+
+.drawer-category-btn .category-icon {
+  font-size: 24px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.drawer-category-btn .category-label {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+}
+
 /* ========================================
    FAB (Floating Action Button)
    ======================================== */

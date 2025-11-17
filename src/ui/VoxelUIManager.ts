@@ -4,6 +4,7 @@ import { BlockCategoryManager } from './BlockCategoryManager';
 import { DeviceDetector } from '../utils/DeviceDetector';
 import { MobileBottomNav } from './MobileBottomNav';
 import { MobileBlockSheet } from './MobileBlockSheet';
+import { MobileDrawer } from './MobileDrawer';
 
 /**
  * Block icon mapping for UI display
@@ -105,6 +106,7 @@ export class VoxelUIManager {
   private currentSearchQuery: string = '';
   private mobileBottomNav?: MobileBottomNav;
   private mobileBlockSheet?: MobileBlockSheet;
+  private mobileDrawer?: MobileDrawer;
 
   constructor(gameEngine: VoxelGameEngine) {
     this.gameEngine = gameEngine;
@@ -199,10 +201,20 @@ export class VoxelUIManager {
         }
       });
 
-      // Handle menu button (placeholder for Phase 4)
+      // Create mobile drawer
+      this.mobileDrawer = new MobileDrawer(uiOverlay, this.categoryManager);
+
+      // Handle menu button - open drawer
       this.mobileBottomNav.onMenuOpen(() => {
-        console.log('Menu button clicked - will implement drawer in Phase 4');
-        // TODO: Open mobile drawer menu in Phase 4
+        if (this.mobileDrawer) {
+          this.mobileDrawer.open();
+        }
+      });
+
+      // Handle category changes from drawer
+      this.mobileDrawer.onCategoryChange((category: number) => {
+        this.categoryManager.setCurrentCategory(category);
+        // Block sheet will be updated automatically via categoryManager.onCategoryChange
       });
 
       // Create mobile block sheet
