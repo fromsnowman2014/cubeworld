@@ -2,6 +2,7 @@ import { VoxelGameEngine } from '../core/VoxelGameEngine';
 import { VoxelGameState, BlockType, ToolMode, BLOCK_TYPES } from '../types/VoxelTypes';
 import { BlockCategoryManager } from './BlockCategoryManager';
 import { DeviceDetector } from '../utils/DeviceDetector';
+import { MobileBottomNav } from './MobileBottomNav';
 
 /**
  * Block icon mapping for UI display
@@ -101,6 +102,7 @@ export class VoxelUIManager {
   private deviceDetector: DeviceDetector;
   private isCompactMode: boolean = false;
   private currentSearchQuery: string = '';
+  private mobileBottomNav?: MobileBottomNav;
 
   constructor(gameEngine: VoxelGameEngine) {
     this.gameEngine = gameEngine;
@@ -164,7 +166,7 @@ export class VoxelUIManager {
   }
 
   /**
-   * Render mobile UI (placeholder - will be implemented in Phase 2)
+   * Render mobile UI
    */
   private renderMobileUI(): void {
     // Hide desktop toolbar
@@ -174,9 +176,28 @@ export class VoxelUIManager {
       toolbar.classList.add('mobile-mode');
     }
 
-    // Mobile UI components will be added in Phase 2
-    // For now, just mark the UI as mobile mode
-    console.log('Mobile UI mode activated');
+    // Hide desktop controls help
+    const controlsHelp = document.getElementById('controls-help');
+    if (controlsHelp) {
+      controlsHelp.classList.add('hidden');
+    }
+
+    // Create mobile bottom navigation
+    const uiOverlay = document.getElementById('ui-overlay');
+    if (uiOverlay) {
+      this.mobileBottomNav = new MobileBottomNav(uiOverlay);
+
+      // Handle tool changes
+      this.mobileBottomNav.onToolChange((tool: string) => {
+        this.gameEngine.setTool(tool as ToolMode);
+      });
+
+      // Handle menu button (placeholder for Phase 4)
+      this.mobileBottomNav.onMenuOpen(() => {
+        console.log('Menu button clicked - will implement drawer in Phase 4');
+        // TODO: Open mobile drawer menu in Phase 4
+      });
+    }
 
     // Still need to update UI with game state
     this.updateUI(this.gameEngine.getGameState());
