@@ -45,7 +45,7 @@ describe('VoxelUIManager - Desktop UI', () => {
       }),
       onGameStateChange: vi.fn((callback) => {
         // Store callback for later use
-        (mockGameEngine as any)._stateChangeCallback = callback;
+        (mockGameEngine as unknown as { _stateChangeCallback: typeof callback })._stateChangeCallback = callback;
       }),
       setBlock: vi.fn(),
       setTool: vi.fn(),
@@ -103,8 +103,6 @@ describe('VoxelUIManager - Desktop UI', () => {
 
     it('should update block grid when category changes', () => {
       uiManager = new VoxelUIManager(mockGameEngine);
-
-      const blockGridBefore = document.getElementById('block-grid')?.children.length || 0;
 
       // Click different category
       const tabs = document.querySelectorAll('.category-tab');
