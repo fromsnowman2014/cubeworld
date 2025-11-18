@@ -697,3 +697,103 @@
     -webkit-touch-callout: none;
   }
 }
+
+/* ========================================
+   TOUCH PULSE ANIMATION (for TouchBlockController)
+   ======================================== */
+@keyframes touch-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Touch feedback indicator (created dynamically by TouchBlockController) */
+.touch-feedback {
+  animation: touch-pulse 0.4s ease-out forwards;
+}
+
+/* ========================================
+   MOBILE INFO BAR (Top)
+   ======================================== */
+.mobile-info-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-top: calc(var(--spacing-sm) + var(--safe-area-top));
+  z-index: 900;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mobile-info-bar .info-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.mobile-info-bar .info-item {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.mobile-info-bar .info-fps {
+  color: #4ecdc4;
+}
+
+.mobile-info-bar .info-block-count {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mobile-info-bar .info-detailed {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.mobile-info-bar.expanded .info-detailed {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: var(--spacing-md);
+}
+
+.mobile-info-bar .info-detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs) 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-info-bar .info-detail-item:last-child {
+  border-bottom: none;
+}
+
+.mobile-info-bar .info-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.mobile-info-bar .info-tool,
+.mobile-info-bar .info-block,
+.mobile-info-bar .info-position {
+  color: white;
+  font-weight: 500;
+}
